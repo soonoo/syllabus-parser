@@ -25,14 +25,6 @@ const selector = 'body > form:nth-child(8) > table:nth-child(7) > tbody:nth-chil
 let response;
 let syllabusList = [];
 
-const semesters = [];
-for(let i = 1; i < 3; i++) {
-  for(let j = 1998; j < 2018; j++) {
-    semesters.push({ year: j, semester: i });
-  }
-}
-semesters.push({ year: 2018, semester: 1 });
-
 const params = new URLSearchParams();
 Object.keys(data).forEach(i => params.append(i, data[i]));
 
@@ -51,42 +43,30 @@ axios.post(LOGIN_URL, params)
       Cookie: cookie,
     }
   }))
-  .then(() => {
-    semesters.reduce((seq, cur) => {
-      return seq.then(() => {
-        return axios.get(SYLlABUS_URL(cur.year, cur.semester), {
-          headers: {
-            Cookie: cookie,
-          },
-          responseType: 'arraybuffer',
-        })
-          .then(r => {
-            response = iconv.convert(r.data).toString();
-            const $ = cheerio.load(response);
+  .then(() => axios.get(SYLlABUS_URL(2018, 2), {
+      headers: {
+        Cookie: cookie,
+      },
+      responseType: 'arraybuffer',
+    })
+  )
+  .then(r => {
+    response = iconv.convert(r.data).toString();
+    const $ = cheerio.load(response);
 
-            syllabusList = [];
-            $(selector).each(function(index, item) {
-              const current = $(this).children();
-              syllabusList.push({
-                id: current.eq(0).text(),
-                title: current.eq(1).text(),
-                type: current.eq(3).text(),
-                credit: current.eq(4).text(),
-                prof: current.eq(5).text(),
-              })
-            });
-
-          })
-          .then(() => {
-            console.log(`${cur.year}-${cur.semester} fetch, count: ${syllabusList.length}`);
-            return upload(`${cur.year}-${cur.semester}.json`, JSON.stringify(syllabusList));
-          })
-          .then((r) => {
-            console.log(`${cur.year}-${cur.semester} success:`, r);
-          })
-          .catch((e) => {
-            console.log(`${cur.year}-${cur.semester} error:`, e);
-          })
+    syllabusList = [];
+    $(selector).each(function(index, item) {
+      const current = $(this).children();
+      syllabusList.push({
+        id: current.eq(0).text(),
+        title: current.eq(1).text(),
+        type: current.eq(3).text(),
+        credit: current.eq(4).text(),
+        prof: current.eq(5).text(),
       })
-    }, Promise.resolve());
+    });
+
+  })
+  .then(() => {
+    return upload(`2018-2.json`, JSON.stringify(syllabusList));
   })
