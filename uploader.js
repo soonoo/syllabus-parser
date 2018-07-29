@@ -5,7 +5,7 @@ const params = {
   Bucket: 'kw-syllabus',
   ContentType: "application/json; charset=utf-8;",
 };
-AWS.config.loadFromPath('./config.json');
+AWS.config.loadFromPath('/Users/soonoo/dev/syllabus-parser/config.json');
 
 const s3 = new AWS.S3({apiVersion: '2006-03-01'});
 

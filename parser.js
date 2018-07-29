@@ -1,3 +1,5 @@
+#!/usr/local/bin/node
+
 const axios = require('axios');
 const { URLSearchParams } = require('url');
 const Iconv = require('iconv').Iconv;
