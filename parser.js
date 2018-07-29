@@ -20,6 +20,7 @@ const LOGIN_URL = 'https://info.kw.ac.kr/webnote/login/login_proc.php';
 const MAIN_URL = 'http://info.kw.ac.kr';
 const SESSION_URL = 'http://info2.kw.ac.kr/servlet/controller.homepage.MainServlet?p_gate=univ&p_process=main&p_page=learning&p_kwLoginType=cookie&gubun_code=11';
 const SYLlABUS_URL = (year, semester) => `https://info.kw.ac.kr/webnote/lecture/h_lecture.php?fsel1=00_00&fsel2=00_00&fsel4=00_00&hakgi=${semester}&hh=&layout_opt=N&mode=view&prof_name=&show_hakbu=&skin_opt=&sugang_opt=all&this_year=${year}`;
+const getLink = (year, semester, code) => `https://info.kw.ac.kr/webnote/lecture/h_lecture01_2.php?layout_opt=N&this_year=${year}&hakgi=${semester}&open_major_code=${code.slice(0, 4)}&open_grade=${code.slice(5, 6)}&open_gwamok_no=${code.slice(7, 11)}&bunban_no=${code.slice(12)}&tmp_key=tmp__stu`;
 let cookie = '';
 const selector = 'body > form:nth-child(8) > table:nth-child(7) > tbody:nth-child(2) > tr:nth-child(n+2)';
 let response;
@@ -63,6 +64,8 @@ axios.post(LOGIN_URL, params)
         type: current.eq(3).text(),
         credit: current.eq(4).text(),
         prof: current.eq(5).text(),
+        hasSyllabus: $(this).attr('bgcolor') !== '#DDDDDD',
+        link: getLink(2018, 2, current.eq(0).text()),
       })
     });
 
